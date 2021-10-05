@@ -469,6 +469,7 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
             "https://mirror.bazel.build/github.com/grpc/grpc/archive/69b6c047bc767b4d80e7af4d00ccb7c45b683dae.tar.gz",
             "https://github.com/grpc/grpc/archive/69b6c047bc767b4d80e7af4d00ccb7c45b683dae.tar.gz",
         ],
+        patch_file = clean_dep("//third_party/grpc:gettid.patch"),
     )
 
     tf_http_archive(
