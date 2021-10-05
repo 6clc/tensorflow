@@ -5,22 +5,8 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run",
-      "preLaunchTask": "Bazel Build (Run)",
-      "type": "cppdbg",
-      "request": "launch",
-      "program": "${workspaceFolder}/bazel-bin/${relativeFileDirname}/${fileBasenameNoExtension}",
-      "args": [],
-      "stopAtEntry": false,
-      // "cwd": "${workspaceFolder}/bazel-bin/${relativeFileDirname}/${fileBasenameNoExtension}",
-      "cwd": "${workspaceRoot}",
-      "environment": [],
-      "externalConsole": false,
-      "MIMode": "gdb"
-    },
-    {
-      "name": "Run Opt",
-      "preLaunchTask": "Bazel Build (Run Opt)",
+      "name": "DebugCCTest",
+      "preLaunchTask": "BuildCCTestDebug",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bazel-bin/${relativeFileDirname}/${fileBasenameNoExtension}",
@@ -31,18 +17,5 @@
       "externalConsole": false,
       "MIMode": "gdb"
     },
-    {
-      "name": "Debug",
-      "preLaunchTask": "Bazel Build (Debug)",
-      "type": "cppdbg",
-      "request": "launch",
-      "program": "${workspaceFolder}/bazel-bin/${relativeFileDirname}/${fileBasenameNoExtension}",
-      "args": [],
-      "stopAtEntry": false,
-      "cwd": "${workspaceFolder}",
-      "environment": [],
-      "externalConsole": false,
-      "MIMode": "gdb"
-    }
   ]
 }

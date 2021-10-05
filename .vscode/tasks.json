@@ -3,31 +3,13 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Bazel Build (Debug)",
+      "label": "BuildCCTestDebug",
       "type": "shell",
-      "command": "bazel build ${relativeFileDirname}:${fileBasenameNoExtension} -c dbg",
+      "command": "liuchao/build.sh build_cc_test ${relativeFileDirname}:${fileBasenameNoExtension}",
       "group": {
         "kind": "build",
         "isDefault": true
       },
     },
-    {
-      "label": "Bazel Build (Run)",
-      "type": "shell",
-      "command": "bazel build ${relativeFileDirname}:${fileBasenameNoExtension}",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-    },
-    {
-      "label": "Bazel Build (Run Opt)",
-      "type": "shell",
-      "command": "bazel build --cxxopt='-std=c++17' ${relativeFileDirname}:${fileBasenameNoExtension} -c opt",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-    }
   ]
 }

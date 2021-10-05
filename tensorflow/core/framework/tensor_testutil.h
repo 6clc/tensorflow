@@ -75,6 +75,19 @@ void FillValues(Tensor* tensor, std::initializer_list<SrcType> vals) {
   }
 }
 
+// Fills in '*tensor' with 'vals', converting the types as needed.
+template <typename T, typename SrcType>
+void FillValue(Tensor* tensor, SrcType val) {
+  auto flat = tensor->flat<T>();
+  if (flat.size() > 0) {
+    size_t i = 0;
+    while(i < flat.size()){
+      flat(i) = val;
+      ++i;
+    }
+  }
+}
+
 // Fills in '*tensor' with a sequence of value of val, val+1, val+2, ...
 //   Tensor x(&alloc, DT_FLOAT, TensorShape({2, 2}));
 //   test::FillIota<float>(&x, 1.0);
