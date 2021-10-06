@@ -3,9 +3,18 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "BuildCCTestDebug",
+      "label": "CCTestDebug",
       "type": "shell",
       "command": "liuchao/build.sh build_cc_test ${relativeFileDirname}:${fileBasenameNoExtension}",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+    },
+    {
+      "label": "CoreTestDebug",
+      "type": "shell",
+      "command": "liuchao/build.sh build_cc_test //tensorflow/core:${fileBasenameNoExtension}",
       "group": {
         "kind": "build",
         "isDefault": true

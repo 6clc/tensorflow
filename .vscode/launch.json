@@ -5,8 +5,8 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "DebugCCTest",
-      "preLaunchTask": "BuildCCTestDebug",
+      "name": "CCTest",
+      "preLaunchTask": "CCTestDebug",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bazel-bin/${relativeFileDirname}/${fileBasenameNoExtension}",
@@ -17,5 +17,20 @@
       "externalConsole": false,
       "MIMode": "gdb"
     },
+    {
+      "name": "CoreTest",
+      "preLaunchTask": "CoreTestDebug",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bazel-bin/tensorflow/core/${fileBasenameNoExtension}",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb"
+    },
+    
+    
   ]
 }
