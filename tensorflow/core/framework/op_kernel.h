@@ -1274,7 +1274,7 @@ class Name : public KernelDefBuilder {
  public:
   // For system kernels, we ignore selective registration and
   // unconditionally register the kernel.
-  explicit Name(const char* op) : KernelDefBuilder(op) {}
+  explicit Name(const char* op) : KernelDefBuilderz(op) {}
 };
 
 }  // namespace system

@@ -291,9 +291,10 @@ struct OpDefBuilderReceiver {
 #define REGISTER_OP_UNIQ_HELPER(ctr, name) REGISTER_OP_UNIQ(ctr, name)
 #define REGISTER_OP_UNIQ(ctr, name)                                          \
   static ::tensorflow::register_op::OpDefBuilderReceiver register_op##ctr    \
-      TF_ATTRIBUTE_UNUSED =                                                  \
+      =                                                  \
           ::tensorflow::register_op::OpDefBuilderWrapper<SHOULD_REGISTER_OP( \
               name)>(name)
+// Reciever register_op233 TF_UNSED= = Wrapper<True>(name)
 
 // The `REGISTER_SYSTEM_OP()` macro acts as `REGISTER_OP()` except
 // that the op is registered unconditionally even when selective
@@ -304,7 +305,7 @@ struct OpDefBuilderReceiver {
   REGISTER_SYSTEM_OP_UNIQ(ctr, name)
 #define REGISTER_SYSTEM_OP_UNIQ(ctr, name)                                \
   static ::tensorflow::register_op::OpDefBuilderReceiver register_op##ctr \
-      TF_ATTRIBUTE_UNUSED =                                               \
+     =                                               \
           ::tensorflow::register_op::OpDefBuilderWrapper<true>(name)
 
 }  // namespace tensorflow

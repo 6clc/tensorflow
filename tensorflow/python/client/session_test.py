@@ -69,7 +69,7 @@ except ImportError:
 
 # NOTE(mrry): Dummy shape registration for ops used in the tests, since they
 # don't have C++ op registrations on which to attach C++ shape fns.
-ops.RegisterShape('ConstructionFails')(common_shapes.unknown_shape)
+# ops.RegisterShape('ConstructionFails')(common_shapes.unknown_shape)
 
 
 class SessionTest(test_util.TensorFlowTestCase):

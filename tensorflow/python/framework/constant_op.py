@@ -249,32 +249,6 @@ def _constant_impl(
     value, dtype, shape, name, verify_shape, allow_broadcast):
   """Implementation of constant."""
   ctx = context.context()
-  if ctx.executing_eagerly():
-    t = convert_to_eager_tensor(value, ctx, dtype)
-    if shape is None:
-      return t
-    shape = tensor_shape.as_shape(shape)
-    if shape == t.shape:
-      return t
-    if verify_shape:
-      raise TypeError("Expected Tensor's shape: %s, got %s." % (tuple(shape),
-                                                                tuple(t.shape)))
-    num_t = t.shape.num_elements()
-    # TODO(josh11b): Implement shape -> eager tensor conversion.
-    if num_t == shape.num_elements():
-      return _eager_reshape(t, shape.as_list(), ctx)
-    if num_t == 1:
-      if t.dtype == dtypes.bool:
-        # We don't have a Fill kernel for bool dtype on GPU. So we first run
-        # Fill on CPU and then copy to GPU if needed.
-        with ops.device("/device:CPU:0"):
-          x = _eager_fill(shape.as_list(), t.cpu(), ctx)
-        return _eager_identity(x, ctx)
-      else:
-        return _eager_fill(shape.as_list(), t, ctx)
-    raise TypeError("Eager execution of tf.constant with unsupported shape "
-                    "(value has %d elements, shape is %s with %d elements)." %
-                    (num_t, shape, shape.num_elements()))
   g = ops.get_default_graph()
   tensor_value = attr_value_pb2.AttrValue()
   tensor_value.tensor.CopyFrom(

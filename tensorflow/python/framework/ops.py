@@ -3011,29 +3011,29 @@ class Graph(object):
     version_def.ParseFromString(compat.as_bytes(data))
     return version_def
 
-  @property
-  def seed(self):
-    """The graph-level random seed of this graph."""
-    return self._seed
+  # @property
+  # def seed(self):
+  #   """The graph-level random seed of this graph."""
+  #   return self._seed
 
-  @seed.setter
-  def seed(self, seed):
-    self._seed = seed
+  # @seed.setter
+  # def seed(self, seed):
+  #   self._seed = seed
 
   @property
   def finalized(self):
     """True if this graph has been finalized."""
     return self._finalized
 
-  def finalize(self):
-    """Finalizes this graph, making it read-only.
+  # def finalize(self):
+  #   """Finalizes this graph, making it read-only.
 
-    After calling `g.finalize()`, no new operations can be added to
-    `g`.  This method is used to ensure that no operations are added
-    to a graph when it is shared between multiple threads, for example
-    when using a `tf.train.QueueRunner`.
-    """
-    self._finalized = True
+  #   After calling `g.finalize()`, no new operations can be added to
+  #   `g`.  This method is used to ensure that no operations are added
+  #   to a graph when it is shared between multiple threads, for example
+  #   when using a `tf.train.QueueRunner`.
+  #   """
+  #   self._finalized = True
 
   def _unsafe_unfinalize(self):
     """Opposite of `finalize`. Internal interface.

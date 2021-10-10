@@ -36,275 +36,275 @@ limitations under the License.
 #include "tensorflow/core/platform/test_benchmark.h"
 #include "tensorflow/core/public/version.h"
 
-class DummyKernel : public tensorflow::OpKernel {
- public:
-  explicit DummyKernel(tensorflow::OpKernelConstruction* context)
-      : OpKernel(context) {}
-  void Compute(tensorflow::OpKernelContext* context) override {}
-};
+// class DummyKernel : public tensorflow::OpKernel {
+//  public:
+//   explicit DummyKernel(tensorflow::OpKernelConstruction* context)
+//       : OpKernel(context) {}
+//   void Compute(tensorflow::OpKernelContext* context) override {}
+// };
 
-// Test that registration works outside a namespace.
-REGISTER_OP("Test1").Input("a: float").Input("b: int32").Output("o: uint8");
-REGISTER_KERNEL_BUILDER(Name("Test1").Device(tensorflow::DEVICE_CPU),
-                        DummyKernel);
+// // Test that registration works outside a namespace.
+// REGISTER_OP("Test1").Input("a: float").Input("b: int32").Output("o: uint8");
+// REGISTER_KERNEL_BUILDER(Name("Test1").Device(tensorflow::DEVICE_CPU),
+//                         DummyKernel);
 
-namespace foo {
-bool match_signature_ = false;
+// namespace foo {
+// bool match_signature_ = false;
 
-// Test that registration works inside a different namespace.
-class TestOp2 : public ::tensorflow::OpKernel {
- public:
-  explicit TestOp2(::tensorflow::OpKernelConstruction* context)
-      : OpKernel(context) {
-    ::tensorflow::Status status = context->MatchSignature(
-        {::tensorflow::DT_INT32}, {::tensorflow::DT_INT32});
-    match_signature_ = status.ok();
-    context->SetStatus(status);
-  }
-  void Compute(::tensorflow::OpKernelContext* context) override {}
-};
+// // Test that registration works inside a different namespace.
+// class TestOp2 : public ::tensorflow::OpKernel {
+//  public:
+//   explicit TestOp2(::tensorflow::OpKernelConstruction* context)
+//       : OpKernel(context) {
+//     ::tensorflow::Status status = context->MatchSignature(
+//         {::tensorflow::DT_INT32}, {::tensorflow::DT_INT32});
+//     match_signature_ = status.ok();
+//     context->SetStatus(status);
+//   }
+//   void Compute(::tensorflow::OpKernelContext* context) override {}
+// };
 
-REGISTER_OP("Test2").Input("i: T").Output("o: T").Attr("T: type");
-REGISTER_KERNEL_BUILDER(Name("Test2")
-                            .Device(::tensorflow::DEVICE_GPU)
-                            .HostMemory("i")
-                            .HostMemory("o"),
-                        TestOp2);
-}  // namespace foo
+// REGISTER_OP("Test2").Input("i: T").Output("o: T").Attr("T: type");
+// REGISTER_KERNEL_BUILDER(Name("Test2")
+//                             .Device(::tensorflow::DEVICE_GPU)
+//                             .HostMemory("i")
+//                             .HostMemory("o"),
+//                         TestOp2);
+// }  // namespace foo
 
 namespace tensorflow {
 
-// Two operations with the same name but different devices.
-REGISTER_OP("Test3").Input("a: T").Input("b: T").Attr("T: type");
+// // Two operations with the same name but different devices.
+// REGISTER_OP("Test3").Input("a: T").Input("b: T").Attr("T: type");
 
-class TestOp3Cpu : public tensorflow::OpKernel {
- public:
-  explicit TestOp3Cpu(OpKernelConstruction* context) : OpKernel(context) {}
-  void Compute(OpKernelContext* context) override {}
-};
+// class TestOp3Cpu : public tensorflow::OpKernel {
+//  public:
+//   explicit TestOp3Cpu(OpKernelConstruction* context) : OpKernel(context) {}
+//   void Compute(OpKernelContext* context) override {}
+// };
 
-REGISTER_KERNEL_BUILDER(
-    Name("Test3").Device(DEVICE_CPU).TypeConstraint<int8>("T"), TestOp3Cpu);
+// REGISTER_KERNEL_BUILDER(
+//     Name("Test3").Device(DEVICE_CPU).TypeConstraint<int8>("T"), TestOp3Cpu);
 
-namespace {
+// namespace {
 
-class TestOp3Gpu : public tensorflow::OpKernel {
- public:
-  explicit TestOp3Gpu(OpKernelConstruction* context) : OpKernel(context) {}
-  void Compute(OpKernelContext* context) override {}
-};
+// class TestOp3Gpu : public tensorflow::OpKernel {
+//  public:
+//   explicit TestOp3Gpu(OpKernelConstruction* context) : OpKernel(context) {}
+//   void Compute(OpKernelContext* context) override {}
+// };
 
-REGISTER_KERNEL_BUILDER(
-    Name("Test3").Device(DEVICE_GPU).TypeConstraint<float>("T"), TestOp3Cpu);
+// REGISTER_KERNEL_BUILDER(
+//     Name("Test3").Device(DEVICE_GPU).TypeConstraint<float>("T"), TestOp3Cpu);
 
-// An Op registered for both
-REGISTER_OP("Test4").Input("i: float").Output("o: float");
-REGISTER_KERNEL_BUILDER(Name("Test4").Device(DEVICE_CPU), DummyKernel);
-REGISTER_KERNEL_BUILDER(Name("Test4").Device(DEVICE_GPU), DummyKernel);
+// // An Op registered for both
+// REGISTER_OP("Test4").Input("i: float").Output("o: float");
+// REGISTER_KERNEL_BUILDER(Name("Test4").Device(DEVICE_CPU), DummyKernel);
+// REGISTER_KERNEL_BUILDER(Name("Test4").Device(DEVICE_GPU), DummyKernel);
 
-// Kernels with different priorities.
-REGISTER_OP("Test5").Input("a: T").Input("b: T").Attr("T: type");
+// // Kernels with different priorities.
+// REGISTER_OP("Test5").Input("a: T").Input("b: T").Attr("T: type");
 
-class TestOp5Cpu : public tensorflow::OpKernel {
- public:
-  explicit TestOp5Cpu(OpKernelConstruction* context) : OpKernel(context) {}
-  void Compute(OpKernelContext* context) override {}
-};
+// class TestOp5Cpu : public tensorflow::OpKernel {
+//  public:
+//   explicit TestOp5Cpu(OpKernelConstruction* context) : OpKernel(context) {}
+//   void Compute(OpKernelContext* context) override {}
+// };
 
-REGISTER_KERNEL_BUILDER(Name("Test5").Device(DEVICE_CPU).Priority(2),
-                        TestOp5Cpu);
+// REGISTER_KERNEL_BUILDER(Name("Test5").Device(DEVICE_CPU).Priority(2),
+//                         TestOp5Cpu);
 
-class TestOp5Gpu : public tensorflow::OpKernel {
- public:
-  explicit TestOp5Gpu(OpKernelConstruction* context) : OpKernel(context) {}
-  void Compute(OpKernelContext* context) override {}
-};
+// class TestOp5Gpu : public tensorflow::OpKernel {
+//  public:
+//   explicit TestOp5Gpu(OpKernelConstruction* context) : OpKernel(context) {}
+//   void Compute(OpKernelContext* context) override {}
+// };
 
-REGISTER_KERNEL_BUILDER(Name("Test5").Device(DEVICE_GPU).Priority(1),
-                        TestOp5Gpu);
+// REGISTER_KERNEL_BUILDER(Name("Test5").Device(DEVICE_GPU).Priority(1),
+//                         TestOp5Gpu);
 
-static std::vector<DeviceType> DeviceTypes() {
-  return {DeviceType(DEVICE_GPU), DeviceType(DEVICE_CPU)};
-}
+// static std::vector<DeviceType> DeviceTypes() {
+//   return {DeviceType(DEVICE_GPU), DeviceType(DEVICE_CPU)};
+// }
 
-class OpKernelTest : public ::testing::Test {
- public:
-  OpKernelTest() : device_(Env::Default()) {}
+// class OpKernelTest : public ::testing::Test {
+//  public:
+//   OpKernelTest() : device_(Env::Default()) {}
 
- protected:
-  NodeDef CreateNodeDef(const string& op_type, const DataTypeVector& inputs) {
-    NodeDefBuilder builder(op_type + "-op", op_type);
-    for (DataType dt : inputs) {
-      builder.Input(FakeInput(dt));
-    }
-    NodeDef node_def;
-    TF_CHECK_OK(builder.Finalize(&node_def));
-    return node_def;
-  }
+//  protected:
+//   NodeDef CreateNodeDef(const string& op_type, const DataTypeVector& inputs) {
+//     NodeDefBuilder builder(op_type + "-op", op_type);
+//     for (DataType dt : inputs) {
+//       builder.Input(FakeInput(dt));
+//     }
+//     NodeDef node_def;
+//     TF_CHECK_OK(builder.Finalize(&node_def));
+//     return node_def;
+//   }
 
-  void ExpectEqual(const string& what, const DataTypeVector& expected,
-                   const DataTypeVector& observed) {
-    EXPECT_EQ(expected.size(), observed.size()) << what;
-    const size_t size = std::min(expected.size(), observed.size());
-    for (size_t i = 0; i < size; ++i) {
-      bool match = TypesCompatible(expected[i], observed[i]);
-      EXPECT_TRUE(match) << what << " i:" << i << ", expected: " << expected[i]
-                         << ", observed: " << observed[i];
-    }
-  }
+//   void ExpectEqual(const string& what, const DataTypeVector& expected,
+//                    const DataTypeVector& observed) {
+//     EXPECT_EQ(expected.size(), observed.size()) << what;
+//     const size_t size = std::min(expected.size(), observed.size());
+//     for (size_t i = 0; i < size; ++i) {
+//       bool match = TypesCompatible(expected[i], observed[i]);
+//       EXPECT_TRUE(match) << what << " i:" << i << ", expected: " << expected[i]
+//                          << ", observed: " << observed[i];
+//     }
+//   }
 
-  void ExpectSuccess(const string& op_type, DeviceType device_type,
-                     const DataTypeVector& inputs,
-                     const DataTypeVector& outputs) {
-    Status status;
-    std::unique_ptr<OpKernel> op(CreateOpKernel(
-        std::move(device_type), &device_, cpu_allocator(),
-        CreateNodeDef(op_type, inputs), TF_GRAPH_DEF_VERSION, &status));
-    EXPECT_TRUE(status.ok()) << status;
-    EXPECT_TRUE(op != nullptr);
-    if (op != nullptr) {
-      ExpectEqual("inputs", op->input_types(), inputs);
-      ExpectEqual("outputs", op->output_types(), outputs);
-    }
-  }
+//   void ExpectSuccess(const string& op_type, DeviceType device_type,
+//                      const DataTypeVector& inputs,
+//                      const DataTypeVector& outputs) {
+//     Status status;
+//     std::unique_ptr<OpKernel> op(CreateOpKernel(
+//         std::move(device_type), &device_, cpu_allocator(),
+//         CreateNodeDef(op_type, inputs), TF_GRAPH_DEF_VERSION, &status));
+//     EXPECT_TRUE(status.ok()) << status;
+//     EXPECT_TRUE(op != nullptr);
+//     if (op != nullptr) {
+//       ExpectEqual("inputs", op->input_types(), inputs);
+//       ExpectEqual("outputs", op->output_types(), outputs);
+//     }
+//   }
 
-  void ExpectFailure(const string& ascii_node_def, DeviceType device_type,
-                     error::Code code) {
-    NodeDef node_def;
-    protobuf::TextFormat::ParseFromString(ascii_node_def, &node_def);
-    Status status;
-    std::unique_ptr<OpKernel> op(
-        CreateOpKernel(std::move(device_type), &device_, cpu_allocator(),
-                       node_def, TF_GRAPH_DEF_VERSION, &status));
-    EXPECT_TRUE(op == nullptr);
-    EXPECT_FALSE(status.ok());
-    if (!status.ok()) {
-      LOG(INFO) << "Status message: " << status.error_message();
-      EXPECT_EQ(code, status.code());
-    }
-  }
+//   void ExpectFailure(const string& ascii_node_def, DeviceType device_type,
+//                      error::Code code) {
+//     NodeDef node_def;
+//     protobuf::TextFormat::ParseFromString(ascii_node_def, &node_def);
+//     Status status;
+//     std::unique_ptr<OpKernel> op(
+//         CreateOpKernel(std::move(device_type), &device_, cpu_allocator(),
+//                        node_def, TF_GRAPH_DEF_VERSION, &status));
+//     EXPECT_TRUE(op == nullptr);
+//     EXPECT_FALSE(status.ok());
+//     if (!status.ok()) {
+//       LOG(INFO) << "Status message: " << status.error_message();
+//       EXPECT_EQ(code, status.code());
+//     }
+//   }
 
- private:
-  DeviceBase device_;
-};
+//  private:
+//   DeviceBase device_;
+// };
 
-TEST_F(OpKernelTest, SuccessCpu) {
-  ExpectSuccess("Test1", DEVICE_CPU, {DT_FLOAT, DT_INT32}, {DT_UINT8});
-  ExpectSuccess("Test1", DEVICE_CPU, {DT_FLOAT_REF, DT_INT32}, {DT_UINT8});
-}
+// TEST_F(OpKernelTest, SuccessCpu) {
+//   ExpectSuccess("Test1", DEVICE_CPU, {DT_FLOAT, DT_INT32}, {DT_UINT8});
+//   ExpectSuccess("Test1", DEVICE_CPU, {DT_FLOAT_REF, DT_INT32}, {DT_UINT8});
+// }
 
-TEST_F(OpKernelTest, SuccessGpu) {
-  foo::match_signature_ = false;
-  ExpectSuccess("Test2", DEVICE_GPU, {DT_INT32}, {DT_INT32});
-  EXPECT_TRUE(foo::match_signature_);
-}
+// TEST_F(OpKernelTest, SuccessGpu) {
+//   foo::match_signature_ = false;
+//   ExpectSuccess("Test2", DEVICE_GPU, {DT_INT32}, {DT_INT32});
+//   EXPECT_TRUE(foo::match_signature_);
+// }
 
-TEST_F(OpKernelTest, SuccessBothCpuAndGpu) {
-  ExpectSuccess("Test3", DEVICE_CPU, {DT_INT8, DT_INT8}, {});
-  ExpectSuccess("Test3", DEVICE_GPU, {DT_FLOAT, DT_FLOAT}, {});
-}
+// TEST_F(OpKernelTest, SuccessBothCpuAndGpu) {
+//   ExpectSuccess("Test3", DEVICE_CPU, {DT_INT8, DT_INT8}, {});
+//   ExpectSuccess("Test3", DEVICE_GPU, {DT_FLOAT, DT_FLOAT}, {});
+// }
 
-TEST_F(OpKernelTest, CpuTypeRegistered) {
-  NodeDef ndef = CreateNodeDef("Test1", {DT_FLOAT, DT_INT32});
-  PrioritizedDeviceTypeVector devs;
-  TF_ASSERT_OK(SupportedDeviceTypesForNode(DeviceTypes(), ndef, &devs));
-  EXPECT_EQ(1, devs.size());
-  EXPECT_EQ(DeviceType(DEVICE_CPU), devs[0].first);
-}
+// TEST_F(OpKernelTest, CpuTypeRegistered) {
+//   NodeDef ndef = CreateNodeDef("Test1", {DT_FLOAT, DT_INT32});
+//   PrioritizedDeviceTypeVector devs;
+//   TF_ASSERT_OK(SupportedDeviceTypesForNode(DeviceTypes(), ndef, &devs));
+//   EXPECT_EQ(1, devs.size());
+//   EXPECT_EQ(DeviceType(DEVICE_CPU), devs[0].first);
+// }
 
-TEST_F(OpKernelTest, CpuAndGpuTypeRegistered) {
-  {
-    // Try a node def of an op that is registered for a specific type
-    // only on CPU.
-    NodeDef ndef = CreateNodeDef("Test3", {DT_INT8, DT_INT8});
-    PrioritizedDeviceTypeVector devs;
-    TF_ASSERT_OK(SupportedDeviceTypesForNode(DeviceTypes(), ndef, &devs));
-    EXPECT_EQ(1, devs.size());
-    EXPECT_EQ(DeviceType(DEVICE_CPU), devs[0].first);
-  }
-  {
-    // Try a node def of an op that is registered for a specific type
-    // only on GPU.
-    NodeDef ndef = CreateNodeDef("Test3", {DT_FLOAT, DT_FLOAT});
-    PrioritizedDeviceTypeVector devs;
-    TF_ASSERT_OK(SupportedDeviceTypesForNode(DeviceTypes(), ndef, &devs));
-    EXPECT_EQ(1, devs.size());
-    EXPECT_EQ(DeviceType(DEVICE_GPU), devs[0].first);
-  }
-  {
-    // Try a node def of an op that is only registered for other types.
-    NodeDef ndef = CreateNodeDef("Test3", {DT_STRING, DT_STRING});
-    PrioritizedDeviceTypeVector devs;
-    TF_ASSERT_OK(SupportedDeviceTypesForNode(DeviceTypes(), ndef, &devs));
-    EXPECT_EQ(0, devs.size());
-  }
+// TEST_F(OpKernelTest, CpuAndGpuTypeRegistered) {
+//   {
+//     // Try a node def of an op that is registered for a specific type
+//     // only on CPU.
+//     NodeDef ndef = CreateNodeDef("Test3", {DT_INT8, DT_INT8});
+//     PrioritizedDeviceTypeVector devs;
+//     TF_ASSERT_OK(SupportedDeviceTypesForNode(DeviceTypes(), ndef, &devs));
+//     EXPECT_EQ(1, devs.size());
+//     EXPECT_EQ(DeviceType(DEVICE_CPU), devs[0].first);
+//   }
+//   {
+//     // Try a node def of an op that is registered for a specific type
+//     // only on GPU.
+//     NodeDef ndef = CreateNodeDef("Test3", {DT_FLOAT, DT_FLOAT});
+//     PrioritizedDeviceTypeVector devs;
+//     TF_ASSERT_OK(SupportedDeviceTypesForNode(DeviceTypes(), ndef, &devs));
+//     EXPECT_EQ(1, devs.size());
+//     EXPECT_EQ(DeviceType(DEVICE_GPU), devs[0].first);
+//   }
+//   {
+//     // Try a node def of an op that is only registered for other types.
+//     NodeDef ndef = CreateNodeDef("Test3", {DT_STRING, DT_STRING});
+//     PrioritizedDeviceTypeVector devs;
+//     TF_ASSERT_OK(SupportedDeviceTypesForNode(DeviceTypes(), ndef, &devs));
+//     EXPECT_EQ(0, devs.size());
+//   }
 
-  {
-    // Try a node def of an op that is registered for both.
-    NodeDef ndef = CreateNodeDef("Test4", {DT_FLOAT});
-    PrioritizedDeviceTypeVector devs;
-    TF_ASSERT_OK(SupportedDeviceTypesForNode(DeviceTypes(), ndef, &devs));
-    EXPECT_EQ(2, devs.size());
-    EXPECT_EQ(DeviceType(DEVICE_GPU), devs[0].first);
-    EXPECT_EQ(DeviceType(DEVICE_CPU), devs[1].first);
-  }
+//   {
+//     // Try a node def of an op that is registered for both.
+//     NodeDef ndef = CreateNodeDef("Test4", {DT_FLOAT});
+//     PrioritizedDeviceTypeVector devs;
+//     TF_ASSERT_OK(SupportedDeviceTypesForNode(DeviceTypes(), ndef, &devs));
+//     EXPECT_EQ(2, devs.size());
+//     EXPECT_EQ(DeviceType(DEVICE_GPU), devs[0].first);
+//     EXPECT_EQ(DeviceType(DEVICE_CPU), devs[1].first);
+//   }
 
-  {
-    // Try a node def of an op where kernels have priorities.
-    NodeDef ndef = CreateNodeDef("Test5", {DT_STRING, DT_STRING});
-    PrioritizedDeviceTypeVector devs;
-    TF_ASSERT_OK(SupportedDeviceTypesForNode(DeviceTypes(), ndef, &devs));
-    EXPECT_EQ(2, devs.size());
-    EXPECT_EQ(DeviceType(DEVICE_CPU), devs[0].first);
-    EXPECT_EQ(2, devs[0].second);
-    EXPECT_EQ(DeviceType(DEVICE_GPU), devs[1].first);
-    EXPECT_EQ(1, devs[1].second);
-  }
-}
+//   {
+//     // Try a node def of an op where kernels have priorities.
+//     NodeDef ndef = CreateNodeDef("Test5", {DT_STRING, DT_STRING});
+//     PrioritizedDeviceTypeVector devs;
+//     TF_ASSERT_OK(SupportedDeviceTypesForNode(DeviceTypes(), ndef, &devs));
+//     EXPECT_EQ(2, devs.size());
+//     EXPECT_EQ(DeviceType(DEVICE_CPU), devs[0].first);
+//     EXPECT_EQ(2, devs[0].second);
+//     EXPECT_EQ(DeviceType(DEVICE_GPU), devs[1].first);
+//     EXPECT_EQ(1, devs[1].second);
+//   }
+// }
 
-TEST_F(OpKernelTest, NotFound) {
-  const auto not_found = error::NOT_FOUND;
-  // Something with that op type name exists, but only with a
-  // different DeviceType.
-  ExpectFailure(CreateNodeDef("Test1", {DT_FLOAT, DT_INT32}).DebugString(),
-                DEVICE_GPU, not_found);
-  ExpectFailure(CreateNodeDef("Test3", {DT_INT8, DT_INT8}).DebugString(),
-                DEVICE_GPU, not_found);
-  ExpectFailure(CreateNodeDef("Test3", {DT_FLOAT, DT_FLOAT}).DebugString(),
-                DEVICE_CPU, not_found);
+// TEST_F(OpKernelTest, NotFound) {
+//   const auto not_found = error::NOT_FOUND;
+//   // Something with that op type name exists, but only with a
+//   // different DeviceType.
+//   ExpectFailure(CreateNodeDef("Test1", {DT_FLOAT, DT_INT32}).DebugString(),
+//                 DEVICE_GPU, not_found);
+//   ExpectFailure(CreateNodeDef("Test3", {DT_INT8, DT_INT8}).DebugString(),
+//                 DEVICE_GPU, not_found);
+//   ExpectFailure(CreateNodeDef("Test3", {DT_FLOAT, DT_FLOAT}).DebugString(),
+//                 DEVICE_CPU, not_found);
 
-  // No kernel with that signature registered.
-  ExpectFailure(CreateNodeDef("Test3", {DT_INT32, DT_INT32}).DebugString(),
-                DEVICE_GPU, not_found);
+//   // No kernel with that signature registered.
+//   ExpectFailure(CreateNodeDef("Test3", {DT_INT32, DT_INT32}).DebugString(),
+//                 DEVICE_GPU, not_found);
 
-  // Nothing with that op type name exists.
-  ExpectFailure("name: 'NF' op: 'Testnotfound'", DEVICE_CPU, not_found);
-  ExpectFailure("name: 'NF' op: 'Testnotfound'", DEVICE_GPU, not_found);
-}
+//   // Nothing with that op type name exists.
+//   ExpectFailure("name: 'NF' op: 'Testnotfound'", DEVICE_CPU, not_found);
+//   ExpectFailure("name: 'NF' op: 'Testnotfound'", DEVICE_GPU, not_found);
+// }
 
-TEST_F(OpKernelTest, TooFewInputs) {
-  const auto invalid = error::INVALID_ARGUMENT;
-  NodeDef node_def = CreateNodeDef("Test1", {DT_FLOAT, DT_INT32});
-  node_def.clear_input();
-  ExpectFailure(node_def.DebugString(), DEVICE_CPU, invalid);
-  node_def.add_input("a");
-  ExpectFailure(node_def.DebugString(), DEVICE_CPU, invalid);
-}
+// TEST_F(OpKernelTest, TooFewInputs) {
+//   const auto invalid = error::INVALID_ARGUMENT;
+//   NodeDef node_def = CreateNodeDef("Test1", {DT_FLOAT, DT_INT32});
+//   node_def.clear_input();
+//   ExpectFailure(node_def.DebugString(), DEVICE_CPU, invalid);
+//   node_def.add_input("a");
+//   ExpectFailure(node_def.DebugString(), DEVICE_CPU, invalid);
+// }
 
-TEST_F(OpKernelTest, TooManyInputs) {
-  const auto invalid = error::INVALID_ARGUMENT;
-  NodeDef node_def = CreateNodeDef("Test1", {DT_FLOAT, DT_INT32});
-  node_def.add_input("c");
-  ExpectFailure(node_def.DebugString(), DEVICE_CPU, invalid);
-}
+// TEST_F(OpKernelTest, TooManyInputs) {
+//   const auto invalid = error::INVALID_ARGUMENT;
+//   NodeDef node_def = CreateNodeDef("Test1", {DT_FLOAT, DT_INT32});
+//   node_def.add_input("c");
+//   ExpectFailure(node_def.DebugString(), DEVICE_CPU, invalid);
+// }
 
-TEST_F(OpKernelTest, MatchSignatureFailes) {
-  const auto invalid = error::INVALID_ARGUMENT;
-  foo::match_signature_ = true;
-  ExpectFailure(CreateNodeDef("Test2", {DT_FLOAT}).DebugString(), DEVICE_GPU,
-                invalid);
-  EXPECT_FALSE(foo::match_signature_);
-}
+// TEST_F(OpKernelTest, MatchSignatureFailes) {
+//   const auto invalid = error::INVALID_ARGUMENT;
+//   foo::match_signature_ = true;
+//   ExpectFailure(CreateNodeDef("Test2", {DT_FLOAT}).DebugString(), DEVICE_GPU,
+//                 invalid);
+//   EXPECT_FALSE(foo::match_signature_);
+// }
 
 class DummyDevice : public DeviceBase {
  public:
