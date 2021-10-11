@@ -20,6 +20,7 @@ limitations under the License.
 #include "tensorflow/core/kernels/ops_util.h"
 #include "tensorflow/core/lib/core/status_test_util.h"
 #include "tensorflow/core/platform/test.h"
+#include <iostream>
 
 namespace tensorflow {
 namespace {
@@ -30,43 +31,46 @@ REGISTER_OP("Sink").Input("i: T").Attr("T: type");
 TEST(NodeBuilderTest, Simple) {
   Graph graph(OpRegistry::Global());
   Node* source_node;
+  // Finalize: build结束，添加进graph分配设备
   TF_EXPECT_OK(NodeBuilder("source_op", "Source")
                    .Attr("out_types", {DT_INT32, DT_STRING})
                    .Finalize(&graph, &source_node));
   ASSERT_TRUE(source_node != nullptr);
+  // print(graph)
+  // std::cout <<graph << std::endl;
 
-  // Try connecting to each of source_node's outputs.
-  TF_EXPECT_OK(NodeBuilder("sink1", "Sink")
-                   .Input(source_node)
-                   .Finalize(&graph, nullptr));
-  TF_EXPECT_OK(NodeBuilder("sink2", "Sink")
-                   .Input(source_node, 1)
-                   .Finalize(&graph, nullptr));
+  // // Try connecting to each of source_node's outputs.
+  // TF_EXPECT_OK(NodeBuilder("sink1", "Sink")
+  //                  .Input(source_node)
+  //                  .Finalize(&graph, nullptr));
+  // TF_EXPECT_OK(NodeBuilder("sink2", "Sink")
+  //                  .Input(source_node, 1)
+  //                  .Finalize(&graph, nullptr));
 
-  // Generate an error if the index is out of range.
-  EXPECT_FALSE(NodeBuilder("sink3", "Sink")
-                   .Input(source_node, 2)
-                   .Finalize(&graph, nullptr)
-                   .ok());
-  EXPECT_FALSE(NodeBuilder("sink4", "Sink")
-                   .Input(source_node, -1)
-                   .Finalize(&graph, nullptr)
-                   .ok());
-  EXPECT_FALSE(NodeBuilder("sink5", "Sink")
-                   .Input({source_node, -1})
-                   .Finalize(&graph, nullptr)
-                   .ok());
+  // // Generate an error if the index is out of range.
+  // EXPECT_FALSE(NodeBuilder("sink3", "Sink")
+  //                  .Input(source_node, 2)
+  //                  .Finalize(&graph, nullptr)
+  //                  .ok());
+  // EXPECT_FALSE(NodeBuilder("sink4", "Sink")
+  //                  .Input(source_node, -1)
+  //                  .Finalize(&graph, nullptr)
+  //                  .ok());
+  // EXPECT_FALSE(NodeBuilder("sink5", "Sink")
+  //                  .Input({source_node, -1})
+  //                  .Finalize(&graph, nullptr)
+  //                  .ok());
 
-  // Generate an error if the node is nullptr.  This can happen when using
-  // GraphDefBuilder if there was an error creating the input node.
-  EXPECT_FALSE(NodeBuilder("sink6", "Sink")
-                   .Input(nullptr)
-                   .Finalize(&graph, nullptr)
-                   .ok());
-  EXPECT_FALSE(NodeBuilder("sink7", "Sink")
-                   .Input(NodeBuilder::NodeOut(nullptr, 0))
-                   .Finalize(&graph, nullptr)
-                   .ok());
+  // // Generate an error if the node is nullptr.  This can happen when using
+  // // GraphDefBuilder if there was an error creating the input node.
+  // EXPECT_FALSE(NodeBuilder("sink6", "Sink")
+  //                  .Input(nullptr)
+  //                  .Finalize(&graph, nullptr)
+  //                  .ok());
+  // EXPECT_FALSE(NodeBuilder("sink7", "Sink")
+  //                  .Input(NodeBuilder::NodeOut(nullptr, 0))
+  //                  .Finalize(&graph, nullptr)
+  //                  .ok());
 }
 
 }  // namespace
