@@ -3,6 +3,16 @@
   // Hover to view descriptions of existing attributes.
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
+  "setupCommands": [
+    {
+      "description": "Enable pretty-printing for gdb",
+      "text": "-enable-pretty-printing",
+      "ignoreFailures": true
+    },
+    {
+      "text": "set substitute-path /build/gcc/src/gcc-build/x86_64-pc-linux-gnu/libstdc++-v3/include /usr/include/c++/11.1.0"
+    }
+   ],
   "configurations": [
     {
       "name": "Python: 当前文件",

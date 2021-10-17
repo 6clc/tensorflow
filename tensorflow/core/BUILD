@@ -4244,7 +4244,7 @@ tf_cc_test(
 )
 
 tf_cuda_cc_test(
-    name = "common_runtime_direct_session_test",
+    name = "direct_session_test",
     size = "small",
     srcs = ["common_runtime/direct_session_test.cc"],
     args = [] + if_cuda(["--heap_check=local"]),  # The GPU tracer leaks memory
@@ -4951,18 +4951,7 @@ alias(
     visibility = ["//visibility:public"],
 )
 
-tf_cc_test(
-    name = "graph_test",
-    size = "small",
-    srcs = [
-        "graph/graph_test.cc",
-    ],
-    linkopts = select({
-        "//tensorflow:darwin": ["-headerpad_max_install_names"],
-        "//conditions:default": [],
-    }),
-    linkstatic = tf_kernel_tests_linkstatic(),
-    deps = [
+HIGH_API_TEST_DEPS = [
         ":core",
         ":core_cpu",
         ":core_cpu_internal",
@@ -4987,7 +4976,20 @@ tf_cc_test(
         "//tensorflow/core/kernels:ops_util",
         "//third_party/eigen3",
         "@com_google_absl//absl/base",
+]
+
+tf_cc_test(
+    name = "graph_test",
+    size = "small",
+    srcs = [
+        "graph/graph_test.cc",
     ],
+    linkopts = select({
+        "//tensorflow:darwin": ["-headerpad_max_install_names"],
+        "//conditions:default": [],
+    }),
+    linkstatic = tf_kernel_tests_linkstatic(),
+    deps = HIGH_API_TEST_DEPS,
 )
 
 tf_cc_test(
@@ -5001,32 +5003,7 @@ tf_cc_test(
         "//conditions:default": [],
     }),
     linkstatic = tf_kernel_tests_linkstatic(),
-    deps = [
-        ":core",
-        ":core_cpu",
-        ":core_cpu_internal",
-        ":direct_session_internal",
-        ":framework",
-        ":framework_internal",
-        ":lib",
-        ":lib_internal",
-        ":ops",
-        ":protos_all_cc",
-        ":protos_test_cc",
-        ":test",
-        ":test_main",
-        ":testlib",
-        "//tensorflow/cc:cc_ops",
-        "//tensorflow/cc:cc_ops_internal",
-        "//tensorflow/cc:function_ops",
-        "//tensorflow/cc:ops",
-        "//tensorflow/cc:scope",
-        "//tensorflow/cc:sendrecv_ops",
-        "//tensorflow/cc:while_loop",
-        "//tensorflow/core/kernels:ops_util",
-        "//third_party/eigen3",
-        "@com_google_absl//absl/base",
-    ],
+    deps = HIGH_API_TEST_DEPS,
 )
 
 tf_cc_test(
@@ -5040,32 +5017,7 @@ tf_cc_test(
         "//conditions:default": [],
     }),
     linkstatic = tf_kernel_tests_linkstatic(),
-    deps = [
-        ":core",
-        ":core_cpu",
-        ":core_cpu_internal",
-        ":direct_session_internal",
-        ":framework",
-        ":framework_internal",
-        ":lib",
-        ":lib_internal",
-        ":ops",
-        ":protos_all_cc",
-        ":protos_test_cc",
-        ":test",
-        ":test_main",
-        ":testlib",
-        "//tensorflow/cc:cc_ops",
-        "//tensorflow/cc:cc_ops_internal",
-        "//tensorflow/cc:function_ops",
-        "//tensorflow/cc:ops",
-        "//tensorflow/cc:scope",
-        "//tensorflow/cc:sendrecv_ops",
-        "//tensorflow/cc:while_loop",
-        "//tensorflow/core/kernels:ops_util",
-        "//third_party/eigen3",
-        "@com_google_absl//absl/base",
-    ],
+    deps = HIGH_API_TEST_DEPS,
 )
 
 tf_cc_test(
@@ -5079,32 +5031,7 @@ tf_cc_test(
         "//conditions:default": [],
     }),
     linkstatic = tf_kernel_tests_linkstatic(),
-    deps = [
-        ":core",
-        ":core_cpu",
-        ":core_cpu_internal",
-        ":direct_session_internal",
-        ":framework",
-        ":framework_internal",
-        ":lib",
-        ":lib_internal",
-        ":ops",
-        ":protos_all_cc",
-        ":protos_test_cc",
-        ":test",
-        ":test_main",
-        ":testlib",
-        "//tensorflow/cc:cc_ops",
-        "//tensorflow/cc:cc_ops_internal",
-        "//tensorflow/cc:function_ops",
-        "//tensorflow/cc:ops",
-        "//tensorflow/cc:scope",
-        "//tensorflow/cc:sendrecv_ops",
-        "//tensorflow/cc:while_loop",
-        "//tensorflow/core/kernels:ops_util",
-        "//third_party/eigen3",
-        "@com_google_absl//absl/base",
-    ],
+   deps = HIGH_API_TEST_DEPS,
 )
 
 tf_cc_test(
@@ -5118,30 +5045,20 @@ tf_cc_test(
         "//conditions:default": [],
     }),
     linkstatic = tf_kernel_tests_linkstatic(),
-    deps = [
-        ":core",
-        ":core_cpu",
-        ":core_cpu_internal",
-        ":direct_session_internal",
-        ":framework",
-        ":framework_internal",
-        ":lib",
-        ":lib_internal",
-        ":ops",
-        ":protos_all_cc",
-        ":protos_test_cc",
-        ":test",
-        ":test_main",
-        ":testlib",
-        "//tensorflow/cc:cc_ops",
-        "//tensorflow/cc:cc_ops_internal",
-        "//tensorflow/cc:function_ops",
-        "//tensorflow/cc:ops",
-        "//tensorflow/cc:scope",
-        "//tensorflow/cc:sendrecv_ops",
-        "//tensorflow/cc:while_loop",
-        "//tensorflow/core/kernels:ops_util",
-        "//third_party/eigen3",
-        "@com_google_absl//absl/base",
+    deps = HIGH_API_TEST_DEPS,
+)
+
+
+tf_cc_test(
+    name = "rendezvous_test_lc",
+    size = "small",
+    srcs = [
+        "framework/rendezvous_test_lc.cc",
     ],
+    linkopts = select({
+        "//tensorflow:darwin": ["-headerpad_max_install_names"],
+        "//conditions:default": [],
+    }),
+    linkstatic = tf_kernel_tests_linkstatic(),
+    deps = HIGH_API_TEST_DEPS,
 )

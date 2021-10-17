@@ -14,7 +14,7 @@ function env() {
 }
 function build_cc_test(){
   env
-  bazel build $* -c dbg --copt -g
+  bazel build $* -c dbg --copt="-g"
 }
 
 
