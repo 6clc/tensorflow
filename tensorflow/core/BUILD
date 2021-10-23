@@ -4384,9 +4384,9 @@ tf_cc_test(
 )
 
 tf_cc_test(
-    name = "common_runtime_executor_test",
+    name = "executor_test_lc",
     size = "small",
-    srcs = ["common_runtime/executor_test.cc"],
+    srcs = ["common_runtime/executor_test_lc.cc"],
     linkstatic = tf_kernel_tests_linkstatic(),
     deps = [
         ":core",

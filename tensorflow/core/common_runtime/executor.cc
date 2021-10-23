@@ -2210,6 +2210,8 @@ bool ExecutorState::NodeDone(const Status& s, const Node* node,
   return completed;
 }
 
+//ready: 准备队列
+//inline_ready: 待准备
 void ExecutorState::ScheduleReady(const TaggedNodeSeq& ready,
                                   TaggedNodeReadyQueue* inline_ready) {
   if (ready.empty()) return;
