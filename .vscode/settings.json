@@ -1,5 +1,7 @@
 {
   "files.associations": {
+    "*.pipeline": "groovy",
+    "*.cu": "cpp",
     "string": "cpp",
     "filesystem": "cpp",
     "iosfwd": "cpp",
@@ -81,7 +83,8 @@
     "hash_set": "cpp",
     "future": "cpp",
     "forward_list": "cpp",
-    "queue": "cpp"
+    "queue": "cpp",
+    "*.idl": "cpp"
   },
   "lldb.displayFormat": "auto",
   "lldb.dereferencePointers": true,

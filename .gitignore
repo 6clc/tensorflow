@@ -40,3 +40,4 @@ xcuserdata/**
 local.properties
 gradleBuild
 supplementary
+logs

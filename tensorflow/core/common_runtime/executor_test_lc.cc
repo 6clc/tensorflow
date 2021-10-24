@@ -142,27 +142,55 @@ Rendezvous::ParsedKey Key(const string& sender, const uint64 incarnation,
 #define ALICE "/job:j/replica:0/task:0/cpu:0"
 #define BOB "/job:j/replica:0/task:0/device:GPU:0"
 
-TEST_F(ExecutorTest, SimpleAdd) {
-  // Create graph: c = a + b
-  std::unique_ptr<Graph> g(new Graph(OpRegistry::Global()));
-  auto in0 = test::graph::Recv(g.get(), "a", "float", ALICE, 1, BOB);
-  auto in1 = test::graph::Recv(g.get(), "b", "float", ALICE, 1, BOB);
-  auto tmp = test::graph::Add(g.get(), in0, in1);
-  test::graph::Send(g.get(), tmp, "c", BOB, 1, ALICE);
-  Create(std::move(g));
-  // Creat Rendezvous
+// TEST_F(ExecutorTest, SimpleAdd) {
+//   // Create graph: c = a + b
+//   std::unique_ptr<Graph> g(new Graph(OpRegistry::Global()));
+//   auto in0 = test::graph::Recv(g.get(), "a", "float", ALICE, 1, BOB);
+//   auto in1 = test::graph::Recv(g.get(), "b", "float", ALICE, 1, BOB);
+//   auto tmp = test::graph::Add(g.get(), in0, in1);
+//   test::graph::Send(g.get(), tmp, "c", BOB, 1, ALICE);
+//   Create(std::move(g));
+//   // Creat Rendezvous
+//   Rendezvous::Args args;
+//   TF_ASSERT_OK(rendez_->Send(Key(ALICE, kIncarnation, BOB, "a"), args, V(1.0),
+//                              false));  // in0 = 1.0
+//   TF_ASSERT_OK(rendez_->Send(Key(ALICE, kIncarnation, BOB, "b"), args, V(1.0),
+//                              false));  // in1 = 1.0
+//   TF_ASSERT_OK(Run(rendez_));
+  
+//   Tensor out = V(-1);
+//   bool is_dead = false;
+//   TF_ASSERT_OK(
+//       rendez_->Recv(Key(BOB, kIncarnation, ALICE, "c"), args, &out, &is_dead));
+//   EXPECT_EQ(2.0, V(out));  // out = 1.0 + 1.0 = 2.0
+// }
+
+
+TEST_F(ExecutorTest, SimpleSend) {
+
+  // // graph "a"
+  // std::unique_ptr<Graph> g(new Graph(OpRegistry::Global()));
+  // auto in0 = test::graph::Recv(g.get(), "a", "float", ALICE, 1, BOB); //创建recv类型的node
+  // // test::graph::Send(g.get(), in0, "c", BOB, 1, ALICE);
+  // Create(std::move(g));
+
+  // rendezvous send
   Rendezvous::Args args;
+  rendez_ = NewLocalRendezvous();
   TF_ASSERT_OK(rendez_->Send(Key(ALICE, kIncarnation, BOB, "a"), args, V(1.0),
                              false));  // in0 = 1.0
-  TF_ASSERT_OK(rendez_->Send(Key(ALICE, kIncarnation, BOB, "b"), args, V(1.0),
-                             false));  // in1 = 1.0
-  TF_ASSERT_OK(Run(rendez_));
+
+  // TF_ASSERT_OK(Run(rendez_));
   
+  // rendezvous receive
   Tensor out = V(-1);
   bool is_dead = false;
   TF_ASSERT_OK(
-      rendez_->Recv(Key(BOB, kIncarnation, ALICE, "c"), args, &out, &is_dead));
-  EXPECT_EQ(2.0, V(out));  // out = 1.0 + 1.0 = 2.0
+      rendez_->Recv(Key(ALICE, kIncarnation, BOB, "a"), args, &out, &is_dead));
+  EXPECT_EQ(1.0, V(out));  // out = 1.0 + 1.0 = 2.0
+  // TF_ASSERT_OK(
+  //     rendez_->Recv(Key(ALICE, kIncarnation, BOB, "a"), args, &out, &is_dead));
+  // EXPECT_EQ(2.0, V(out));  // out = 1.0 + 1.0 = 2.0
 }
 
 }  // namespace tensorflow

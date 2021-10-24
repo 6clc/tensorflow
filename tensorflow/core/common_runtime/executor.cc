@@ -1500,7 +1500,7 @@ void ExecutorState::RunAsync(Executor::DoneCallback done) {
   // Initialize the ready queue.
   for (const Node* n : impl_->root_nodes_) {
     DCHECK_EQ(n->in_edges().size(), 0);
-    ready.push_back(TaggedNode{n, root_frame_, 0, false});
+    ready.push_back(TaggedNode{n, root_frame_, 0, false}); // liuchao: convert Node to Frame
   }
   if (ready.empty()) {
     delete this;
@@ -1788,7 +1788,7 @@ void ExecutorState::Process(TaggedNode tagged_node, int64 scheduled_nsec) {
           device->Compute(op_kernel, &ctx);
         }
 
-        nodestats::SetOpEnd(stats);
+        nodestats::SetOpEnd(stats); // compute over
         s = ProcessOutputs(item, &ctx, &outputs, stats);
         if (s.ok() && impl_->device_record_tensor_accesses_) {
           // Get the list of all tensors accessed during the execution
@@ -2210,8 +2210,8 @@ bool ExecutorState::NodeDone(const Status& s, const Node* node,
   return completed;
 }
 
-//ready: 准备队列
-//inline_ready: 待准备
+//ready: 确定跑在该线程的node
+//inline_ready: 看情况跑不跑在该线程的node
 void ExecutorState::ScheduleReady(const TaggedNodeSeq& ready,
                                   TaggedNodeReadyQueue* inline_ready) {
   if (ready.empty()) return;

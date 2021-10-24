@@ -109,7 +109,7 @@ class Executor {
       ret = s;
       n.Notify();
     });
-    n.WaitForNotification();
+    n.WaitForNotification(); // 阻塞
     return ret;
   }
 };
