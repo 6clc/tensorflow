@@ -31,86 +31,17 @@ limitations under the License.
 #include "tensorflow/core/platform/protobuf.h"
 #include "tensorflow/core/platform/test.h"
 
-namespace tensorflow {
-namespace {
+using namespace tensorflow;
 
-// REGISTER_OP("OneInput").Input("x: float");
+int main() {
+  Graph graph(OpRegistry::Global());
+  Node* source = graph.source_node();
+  Node* sink = graph.sink_node();
+  std:: cout << graph.num_node_ids() <<std::endl;
 
-// REGISTER_OP("OneOutput").Output("y: float");
-
-// REGISTER_OP("OneInputTwoOutputs")
-//     .Input("x: float")
-//     .Output("y: float")
-//     .Output("z: float");
-
-// REGISTER_OP("TwoInputsOneOutput")
-//     .Input("x: float")
-//     .Input("y: float")
-//     .Output("z: float");
-
-class GraphTest : public ::testing::Test {
- protected:
-  GraphTest() : graph_(OpRegistry::Global()) {}
-  ~GraphTest() override {}
-
-  // static void VerifyNodes(Node* node, const std::vector<Node*>& expected_in,
-  //                         const std::vector<Node*>& expected_out) {
-  //   std::vector<Node*> in;
-  //   for (const Edge* e : node->in_edges()) {
-  //     in.push_back(e->src());
-  //   }
-  //   EXPECT_EQ(Stringify(expected_in), Stringify(in));
-
-  //   std::vector<Node*> out;
-  //   for (const Edge* e : node->out_edges()) {
-  //     out.push_back(e->dst());
-  //   }
-  //   EXPECT_EQ(Stringify(expected_out), Stringify(out));
-  // }
-
-  // void VerifyGraphStats() {
-  //   int nodes = 0;
-  //   for (const Node* n : graph_.nodes()) {
-  //     VLOG(1) << n->id();
-  //     ++nodes;
-  //   }
-  //   EXPECT_EQ(nodes, graph_.num_nodes());
-  //   int edges = 0;
-  //   for (const Edge* e : graph_.edges()) {
-  //     VLOG(1) << e->id();
-  //     ++edges;
-  //   }
-  //   EXPECT_EQ(edges, graph_.num_edges());
-  // }
-
-  Graph graph_;
-
- private:
-  // Convert a list of nodes to a sorted list of strings so failure messages
-  // are readable.
-  static std::vector<string> Stringify(const std::vector<Node*>& nodes) {
-    std::vector<string> result;
-    result.reserve(nodes.size());
-    for (Node* n : nodes) {
-      result.push_back(n->DebugString());
-    }
-    std::sort(result.begin(), result.end());
-    return result;
+  // 遍历graph里的edge
+  for(auto itr=graph.edges().begin(); itr != graph.edges().end(); ++itr){
+    std::cout << (*itr)->DebugString() <<std::endl;
   }
-};
-
-TEST_F(GraphTest, Constructor) {
-  Node* source = graph_.source_node();
-  EXPECT_NE(source, nullptr);
-
-  Node* sink = graph_.sink_node();
-  EXPECT_NE(sink, nullptr);
-  
-  // VerifyNodes(source, {}, {sink});
-  // VerifyNodes(sink, {source}, {});
-  EXPECT_EQ(2, graph_.num_node_ids());
-  // VerifyGraphStats();
+  return 0;
 }
-
-}  // namespace
-}  // namespace tensorflow
